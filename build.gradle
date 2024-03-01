@@ -1,0 +1,47 @@
+plugins {
+    id("java")
+}
+sourceCompatibility = '11'
+targetCompatibility = '11'
+group = "org.example"
+version = "1.0-SNAPSHOT"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation(platform("org.junit:junit-bom:5.9.1"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
+    implementation 'org.json:json:20220320'
+}
+
+tasks.test {
+    useJUnitPlatform()
+}
+
+apply plugin: 'application'
+
+mainClassName = 'Main'
+
+tasks.register('leader', JavaExec) {
+    main = 'org.example.Main'
+    classpath = sourceSets.main.runtimeClasspath
+    args = ['leader', findProperty('port') ?: '7000']
+}
+
+tasks.register('node', JavaExec) {
+    main = 'org.example.Main'
+    classpath = sourceSets.main.runtimeClasspath
+    args = ['node', findProperty('id') ?: '1', findProperty('money') ?: '100', findProperty('port') ?: '7000', findProperty('host') ?: 'localhost']
+}
+
+tasks.register('client', JavaExec) {
+    main = 'org.example.Main'
+    classpath = sourceSets.main.runtimeClasspath
+    args = ['client', findProperty('id') ?: '1', findProperty('host') ?: 'localhost', findProperty('port') ?: '7000']
+}
+
+tasks.named('client') {
+    standardInput = System.in
+}
